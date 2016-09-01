@@ -1,0 +1,74 @@
+#!/bin/bash
+
+echo "Setting up git..."
+
+git init > /dev/null
+
+echo -e "#npm debugging logs\nnpm-debug.log*\n\n#project dependencies\nnode_modules\n\n#OSX folder attributes\n.DS_Store\n\n#temporary files\n*.tmp\n*~" >> .gitignore
+
+git add .gitignore > /dev/null
+
+echo "$(basename `pwd`)" >> README.md
+
+git add README.md > /dev/null
+
+git commit -m "Initializing repository with readme and gitignore" > /dev/null
+
+echo "Setting up npm..."
+
+npm init -y > /dev/null 2>&1
+
+npm install --save underscore > /dev/null 2>&1
+
+echo "Setting up gulp..."
+
+npm install --save-dev gulp > /dev/null 2>&1
+
+echo -e "const gulp = require('gulp');\n//Gulp dependencies go here\n\ngulp.task('default',function(){\n\t//Gulp tasks go here\n});" >> gulpfile.js
+
+echo "Setting up directory structure..."
+
+mkdir es6 > /dev/null
+mkdir dist > /dev/null
+mkdir public > /dev/null
+cd public > /dev/null
+mkdir es6 > /dev/null
+mkdir dist > /dev/null
+cd .. > /dev/null
+
+echo "Setting up babel..."
+
+npm install --save-dev babel-preset-es2015 > /dev/null 2>&1
+
+echo -e "{ \"presets\": [\"es2015\"] " >> .babelrc
+
+npm install --save-dev gulp-babel > /dev/null 2>&1
+
+echo "Setting up eslint..."
+
+cp ../.eslintrc.json ./.eslintrc.json
+# echo "eslint --init" > /dev/null
+#
+# echo -ne '\n' > /dev/null
+#
+# echo "y" > /dev/null
+# echo "y" > /dev/null
+# echo KEYS_DOWN > /dev/null
+# echo -ne '\n' > /dev/null
+# echo 'y' > /dev/null
+# echo 'N' > /dev/null
+# echo -ne '\n' > /dev/null
+# echo -ne '\n' > /dev/null
+# echo -ne '\n' > /dev/null
+# echo "Y" > /dev/null
+# echo KEYS_DOWN > /dev/null
+# echo KEYS_DOWN > /dev/null
+# echo -ne '\n' > /dev/null
+
+npm install --save-dev gulp-eslint > /dev/null 2>&1
+
+echo "Setting up gulpfile.js"
+
+echo -e "const gulp = require('gulp');\nconst babel = require('gulp-babel');\nconst eslint = require('gulp-eslint');;\n\ngulp.task('default',function(){\n\t//Run Eslint\n\tgulp.src([\"es6/**/*.js\",\"public/es6/**/*.js\"])\n\t.pipe(eslint())\n\t.pipe(eslint.format());\n\t//Node source\n\tgulp.src(\"es6/**/*.js\")\n\t.pipe(babel())\n\t.pipe(gulp.dest(\"dist\"));\n\t//browser source\n\tgulp.src(\"public/es6/**/*.js\")\n\t.pipe(babel())\n\t.pipe(gulp.dest(\"public/dist\"));});" > gulpfile.js
+
+echo "Done"
